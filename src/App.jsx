@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FormModal from './components/FormModal'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = 'https://thgjbuzaddoskyoqyoff.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoZ2pidXphZGRvc2t5b3F5b2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTE1ODgxMjUsImV4cCI6MjAwNzE2NDEyNX0.04TOQQN-gydBTRu3PxGfHaD4OTeCtRTo5sUnMsA2FhA'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const initialTodos = [
   { id: 1, text: 'Learn VSCode', completed: true, points: 2, user: {id: 1, name: 'Abu'} },
@@ -25,6 +30,20 @@ function App() {
   const [todos, setTodos] = useState(initialTodos)
   const [todoEdit, setTodoEdit] = useState(defaultTodo)
   const [showModal, setShowModal] = useState(false)
+
+  const fetchTodos = async () => {
+    
+    let { data, error } = await supabase
+    .from('todos')
+    .select('id')
+    
+    setTodos([...todos])
+
+  }
+
+  useEffect(() =>{
+    fetchTodos()
+  },[])
 
   const handleToggleCompleted = (id) => {
     const newTodos = todos.map((todo) => {
